@@ -36,7 +36,8 @@ function Navbar() {
   function handleOnClick() {
     const element = document.getElementById('autocomplete');
     console.log(element.value)
-    window.location.href = `https://www.coingecko.com/es/monedas/${element.value}`
+    const elementLow = element.value.toLowerCase();
+    window.location.href = `https://www.coingecko.com/es/monedas/${elementLow}`
 
   }
 

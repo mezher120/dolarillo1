@@ -3,11 +3,12 @@ import { StarIcon, Bars4Icon } from '@heroicons/react/24/solid'
 import { Box, Button, Typography, Modal } from '@mui/material'
 import Navigation from './Navigation';
 import {auth, db} from '../firebase';
-import { addDoc, collection, doc, setDoc } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, setDoc, where } from 'firebase/firestore';
 
 function LineTable({num, icon, name, symbol, price, percentage}) {
 
   const [open, setOpen] = React.useState(false);
+  const [star, setStar] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -32,13 +33,34 @@ function LineTable({num, icon, name, symbol, price, percentage}) {
   }
 
   async function addToFavorites(params) {
-    const newFavorite = await addDoc(docAddRef, {
-      name: name,
-      symbol: symbol,
-      price: price,
-      percentage: percentage,
-      username: auth.currentUser.uid
-    })
+    if (!auth.currentUser) {
+      return alert('You have to sign In')
+    }
+    
+    if (star === false) {
+      
+      try {
+        const newFavorite = await addDoc(docAddRef, {
+          name: name,
+          symbol: symbol,
+          price: price,
+          percentage: percentage,
+          username: auth.currentUser.uid
+        })
+        setStar(true);
+        console.log(newFavorite, 'i am ture')
+        
+      } catch (error) {
+        console.log(error)
+      }
+    } 
+    if (star === true) {
+      const favorites = await getDocs(docAddRef, where('username', '==', auth.currentUser.uid))
+      const favoritesArray = favorites.docs.map((favorite) => ({...favorite.data(), id: favorite.id})).filter((doc) => doc.username === auth.currentUser.uid && doc.name === name)
+      console.log(favoritesArray, 'i am false')
+      await deleteDoc(doc(db, 'favorites', favoritesArray[0].id))
+      setStar(false);
+    }
   }
 
   return (
@@ -63,7 +85,10 @@ function LineTable({num, icon, name, symbol, price, percentage}) {
 
                 </td>
                 <td class="py-4 text-right flex gap-4">
-                    <StarIcon onClick={() => addToFavorites()} className='w-6 h-6 cursor-pointer hover:text-yellow-500 '></StarIcon>
+                  
+                {star ? <StarIcon onClick={() => addToFavorites()} className='w-6 h-6 cursor-pointer text-yellow-500 '></StarIcon>
+                  : <StarIcon onClick={() => addToFavorites()} className='w-6 h-6 cursor-pointer hover:text-yellow-500 '></StarIcon>  
+                  }
                     <Bars4Icon onClick={handleOpen} className='w-6 h-6 cursor-pointer hover:text-blue-700' ></Bars4Icon>
                 <Modal
                 open={open}

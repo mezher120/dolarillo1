@@ -1,6 +1,7 @@
-import { collection, getDoc, getDocs, query, where } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react'
+import { collection, deleteDoc, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
+import React, { useEffect, useMemo, useState } from 'react'
 import { auth, db } from '../firebase';
+import { XMarkIcon, Bars4Icon } from '@heroicons/react/24/solid'
 
 function Favorites() {
 
@@ -27,9 +28,29 @@ function Favorites() {
             
             const querySnapshot = await getDocs(collection(db, 'favorites'));
             console.log(querySnapshot)
-            const data = querySnapshot.docs.map((doc) => doc.data()).filter((doc) => doc.username == auth.currentUser.uid);
+            const data = querySnapshot.docs.map((doc) => ({...doc.data(),   id: doc.id})).filter((doc) => doc.username == auth.currentUser.uid);
             console.log(data)
             setFavorites(data);
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    function goTo(params) {
+        const idName = params.toLowerCase();
+        return window.location.href = `https://www.coingecko.com/es/monedas/${idName}`
+    }
+    
+    
+    async function deleteFavorite(id, index) {
+        try {
+            console.log(id)
+            const newFavorites = [...favorites]
+            newFavorites.splice(index, 1);
+
+            setFavorites(newFavorites);
+            await deleteDoc(doc(db, 'favorites', id));
+
         } catch (error) {
             console.log(error)
         }
@@ -60,9 +81,9 @@ function Favorites() {
                 </tr>
             </thead>
             <tbody>
-                {favorites && favorites.map((favorite) => (
+                {favorites && favorites.map((favorite, index) => (
 
-                <tr class=" bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <tr key={favorite.id} class=" bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
 
                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     {favorite.name}
@@ -76,8 +97,9 @@ function Favorites() {
                 <td class="px-6 py-4">
                     {favorite.percentage}
                 </td>
-                <td>
-                    delete/find more...
+                <td className='flex flex-row items-center gap-4 py-4'>
+                    <XMarkIcon onClick={() => deleteFavorite(favorite.id, index)} className='w-6 h-6 cursor-pointer hover:text-red-500 '></XMarkIcon>
+                    <Bars4Icon onClick={() => goTo(favorite.name)} className='w-6 h-6 cursor-pointer hover:text-blue-700'></Bars4Icon>
                 </td>
                 </tr>
                 ))}
