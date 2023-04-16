@@ -51,7 +51,7 @@ function Table() {
     
 async function fetchData() {
     try {
-        const apiResCrypto = await axios.get('http://localhost:3001/cryptos')
+        const apiResCrypto = await axios.get('/cryptos')
         console.log(apiResCrypto.data)
         setcryptoCoins(apiResCrypto.data);
         console.log(cryptoCoins)

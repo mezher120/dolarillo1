@@ -16,7 +16,7 @@ useEffect(() => {
 
 async function fetchData() {
   try {
-    const response = await axios.get('http://localhost:3001/all');
+    const response = await axios.get('/all');
     setCoins(response.data);
   } catch (error) {
     console.log(error.message)

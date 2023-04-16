@@ -52,7 +52,7 @@ function Navbar() {
   }
 
   async function coinsSearch() {
-    const res = await axios.get('http://localhost:3001/cryptosSearch');
+    const res = await axios.get('/cryptosSearch');
     setOptions(res.data);
     console.log(options)
   }
