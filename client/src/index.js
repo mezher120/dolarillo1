@@ -7,10 +7,10 @@ import {BrowserRouter} from 'react-router-dom';
 import { FirebaseAppProvider } from 'reactfire'; // firebase in react requires envolve all the app wuith this provider
 import { firebaseConfig } from './firebase'; // importing the config for FirebaseAppProvider
 import { Suspense } from 'react'; // to show a text waiting data from firebase before rendering
-import dotenv from 'dotenv';
+// import dotenv from 'dotenv';
 import axios from 'axios';
 
-dotenv.config();
+// dotenv.config();
 
 axios.defaults.baseURL = process.env.REACT_APP_API || "http://localhost:3001";
 
