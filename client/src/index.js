@@ -7,7 +7,10 @@ import {BrowserRouter} from 'react-router-dom';
 import { FirebaseAppProvider } from 'reactfire'; // firebase in react requires envolve all the app wuith this provider
 import { firebaseConfig } from './firebase'; // importing the config for FirebaseAppProvider
 import { Suspense } from 'react'; // to show a text waiting data from firebase before rendering
+import axios from 'axios';
 
+
+axios.defaults.baseURL = process.env.REACT_APP_API || "http://localhost:3001";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
