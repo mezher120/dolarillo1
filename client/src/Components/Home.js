@@ -24,7 +24,7 @@ async function fetchData() {
 }
 
   return (
-    <div className='bg-slate-200 py-3'>
+    <div className='bg-slate-200 py-3 overflow-x-auto'>
       <div className='flex gap-2 justify-center'>
       {coins && coins.map((coin) => (
         <CoinsTarget name={coin.casa.nombre} buy={coin.casa.compra} sell={coin.casa.venta} ></CoinsTarget>
